@@ -22,6 +22,7 @@ import (
 // secret_access_key: your-secret-access-key
 // max_retries: 5
 // timeout: 300
+// s3_force_path_style: true
 type S3 struct {
 	Base
 	bucket string
@@ -31,6 +32,7 @@ type S3 struct {
 
 func (ctx *S3) open() (err error) {
 	ctx.viper.SetDefault("region", "us-east-1")
+	ctx.viper.SetDefault("s3_force_path_style", "true")
 	cfg := aws.NewConfig()
 	endpoint := ctx.viper.GetString("endpoint")
 	if len(endpoint) > 0 {
@@ -43,6 +45,7 @@ func (ctx *S3) open() (err error) {
 	)
 	cfg.Region = aws.String(ctx.viper.GetString("region"))
 	cfg.MaxRetries = aws.Int(ctx.viper.GetInt("max_retries"))
+	cfg.S3ForcePathStyle = aws.Bool(ctx.viper.GetBool("s3_force_path_style"))
 
 	ctx.bucket = ctx.viper.GetString("bucket")
 	ctx.path = ctx.viper.GetString("path")
