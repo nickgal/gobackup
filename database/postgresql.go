@@ -17,6 +17,7 @@ import (
 // database: test
 // username:
 // password:
+// additional_options:
 type PostgreSQL struct {
 	Base
 	host        string
@@ -25,6 +26,7 @@ type PostgreSQL struct {
 	username    string
 	password    string
 	dumpCommand string
+	additionalOptions []string
 }
 
 func (ctx PostgreSQL) perform() (err error) {
@@ -37,6 +39,10 @@ func (ctx PostgreSQL) perform() (err error) {
 	ctx.database = viper.GetString("database")
 	ctx.username = viper.GetString("username")
 	ctx.password = viper.GetString("password")
+	addOpts := viper.GetString("additional_options")
+	if len(addOpts) > 0 {
+		ctx.additionalOptions = strings.Split(addOpts, " ")
+	}
 
 	if err = ctx.prepare(); err != nil {
 		return
@@ -60,6 +66,9 @@ func (ctx *PostgreSQL) prepare() (err error) {
 	}
 	if len(ctx.username) > 0 {
 		dumpArgs = append(dumpArgs, "--username="+ctx.username)
+	}
+	if len(ctx.additionalOptions) > 0 {
+		dumpArgs = append(dumpArgs, ctx.additionalOptions...)
 	}
 
 	ctx.dumpCommand = "pg_dump " + strings.Join(dumpArgs, " ") + " " + ctx.database
