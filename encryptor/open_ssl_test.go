@@ -11,6 +11,7 @@ func TestOpenSSL_options(t *testing.T) {
 		password: "foo(872",
 		salt:     false,
 		base64:   true,
+		pbkdf2:   false,
 	}
 
 	opts := strings.Join(ctx.options(), " ")
@@ -23,4 +24,8 @@ func TestOpenSSL_options(t *testing.T) {
 	ctx.base64 = false
 	opts = strings.Join(ctx.options(), " ")
 	assert.Equal(t, opts, "aes-256-cbc -salt -k foo(872")
+
+	ctx.pbkdf2 = true
+	opts = strings.Join(ctx.options(), " ")
+	assert.Equal(t, opts, "aes-256-cbc -pbkdf2 -salt -k foo(872")
 }
