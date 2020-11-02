@@ -42,19 +42,20 @@ func (ctx Model) Perform() {
 		logger.Error(err)
 		return
 	}
+	defer ctx.cleanupArchive(archivePath)
 
 	archivePath, err = encryptor.Run(archivePath, ctx.Config)
 	if err != nil {
 		logger.Error(err)
 		return
 	}
+	defer ctx.cleanupArchive(archivePath)
 
 	err = storage.Run(ctx.Config, archivePath)
 	if err != nil {
 		logger.Error(err)
 		return
 	}
-
 }
 
 // Cleanup model temp files
@@ -65,4 +66,13 @@ func (ctx Model) cleanup() {
 		logger.Error("Cleanup temp dir "+config.TempPath+" error:", err)
 	}
 	logger.Info("======= End " + ctx.Config.Name + " =======\n\n")
+}
+
+// Cleanup archive file
+func (ctx Model) cleanupArchive(archivePath string) {
+	logger.Info("Cleanup archive file:" + archivePath + "...\n")
+	err := os.Remove(archivePath)
+	if err != nil {
+		logger.Error("Cleanup archive file " + archivePath + " error:", err)
+	}
 }
