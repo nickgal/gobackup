@@ -31,7 +31,10 @@ func Run(model config.ModelConfig) (err error) {
 	logger.Info("=> includes", len(includes), "rules")
 
 	opts := options(model.DumpPath, excludes, includes)
-	helper.Exec("tar", opts...)
+	_, err = helper.Exec("tar", opts...)
+	if err != nil {
+		return err
+	}
 
 	logger.Info("------------- Archives -------------\n")
 
