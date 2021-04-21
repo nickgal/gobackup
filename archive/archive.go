@@ -43,7 +43,12 @@ func options(dumpPath string, excludes, includes []string) (opts []string) {
 	if helper.IsGnuTar {
 		opts = append(opts, "--ignore-failed-read")
 	}
-	opts = append(opts, "-cPf", tarPath)
+	if helper.IsBusyBoxTar {
+		opts = append(opts, "-cf")
+	} else {
+		opts = append(opts, "-cPf")
+	}
+	opts = append(opts, tarPath)
 
 	for _, exclude := range excludes {
 		opts = append(opts, "--exclude="+filepath.Clean(exclude))

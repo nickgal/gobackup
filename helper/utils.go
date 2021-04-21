@@ -5,17 +5,29 @@ import (
 )
 
 var (
+	tarVersion = ""
 	// IsGnuTar show tar type
 	IsGnuTar = false
+	IsBusyBoxTar = false
 )
 
 func init() {
+	getTarVersion()
 	checkIsGnuTar()
+	checkIsBusyBoxTar()
+}
+
+func getTarVersion() {
+	out, _ := Exec("tar", "--version")
+	tarVersion = out
 }
 
 func checkIsGnuTar() {
-	out, _ := Exec("tar", "--version")
-	IsGnuTar = strings.Contains(out, "GNU")
+	IsGnuTar = strings.Contains(tarVersion, "GNU")
+}
+
+func checkIsBusyBoxTar() {
+	IsBusyBoxTar = strings.Contains(tarVersion, "busybox")
 }
 
 // CleanHost clean host url ftp://foo.bar.com -> foo.bar.com
